@@ -82,6 +82,8 @@ ggplot() +
   ggtitle("Landfill Sites in North Carolina")
 
 
+levels(RUST_shp$ConfRisk)
+
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
   scale_fill_viridis(option = "cividis", direction = -1) +

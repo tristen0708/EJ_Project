@@ -9,24 +9,97 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r Prepare workspace}
+
+library(sf)
+library(tidyverse)
+library(leaflet)
+library(mapview)
+
+```
 
 ```{r }
 
-
+Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
 
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
+```{r }
+#Read in Counties shapefile into an sf dataframe, filtering for just NC counties
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+NC_Counties_shp <- st_read(dsn = "./Data/Spatial/NC_Counties.shp") 
+Landfills_shp <- st_read(dsn = "./Data/Spatial/ActivePermittedLandiflls.shp") 
+IH_shp <- st_read(dsn = "./Data/Spatial/IH_Sites.shp") 
+FRB_shp <- st_read(dsn = "./Data/Spatial/FRB_Sites.shp") 
+BF_shp <- st_read(dsn = "./Data/Spatial/BF_Sites.shp") 
+RUST_shp <- st_read(dsn = "./Data/Spatial/RUST.shp") 
+HW_shp <- st_read(dsn = "./Data/Spatial/HW_Sites.shp") 
+
+
+NC_gages <- st_read(dsn = "./Data/Spatial/gagesII_9322_sept30_2011.shp") %>%
+  filter(STATE == "NC")
+
+#Reveal the CRS of the counties features
+st_crs(NC_Counties_shp)
+st_crs(Landfills_shp)
+st_crs(IH_shp)
+st_crs(FRB_shp)
+st_crs(BF_shp)
+st_crs(RUST_shp)
+st_crs(HW_shp)
+st_crs(NC_gages)
+
+#Plot the data
+mapview(NC_Counties_shp) + 
+  mapview(Landfills_shp, color = "black")
+
+ggplot() + 
+  geom_sf(data = NC_Counties_shp,col='red') + 
+  geom_sf(data = Landfills_shp,col='blue')
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+#Join poverty data to county shapefile
+county_poverty_join <- NC_Counties_shp %>% 
+  left_join(y = Poverty_NC,by = c("CO_NAME" =  "Name"))
+
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(option = "cividis", direction = -1) +
+  geom_sf(data = BF_shp, alpha = 0.4) +
+ labs(fill = "% in Poverty") +
+  ggtitle("Brownfield Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(option = "cividis", direction = -1) +
+  geom_sf(data = Landfills_shp) +
+ labs(fill = "% in Poverty") +
+  ggtitle("Landfill Sites in North Carolina")
+
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(option = "cividis", direction = -1) +
+  geom_sf(data = RUST_shp) +
+ labs(fill = "% in Poverty") +
+  ggtitle("RUST Sites in North Carolina")
+```
+
+```{r}
+
+mapview(county_poverty_join, zcol = "Poverty_Percent_allages", color = viridis) 
+
+
+as.data.frame(table(numbers))
+
+ggplot() +
+geom_point(x= county_poverty_join$Poverty_Percent_allages , y= )
+
+count(Landfills_shp, Landfills_shp$County)
+
+```

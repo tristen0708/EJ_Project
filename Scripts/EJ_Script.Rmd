@@ -15,8 +15,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(sf)
 library(tidyverse)
+library(dplyr)
 library(leaflet)
 library(mapview)
+library(viridis)
+library(dichromat)
+library(cluster)
 
 ```
 
@@ -27,7 +31,7 @@ Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
 ```
 
 
-```{r }
+```{r}
 #Read in Counties shapefile into an sf dataframe, filtering for just NC counties
 
 NC_Counties_shp <- st_read(dsn = "./Data/Spatial/NC_Counties.shp") 
@@ -52,13 +56,31 @@ st_crs(RUST_shp)
 st_crs(HW_shp)
 st_crs(NC_gages)
 
-#Plot the data
+#Filter datasets
+
+#Removing location that is incorrect
+Landfills_shp_mod <- subset(Landfills_shp, !LocationID == "P1252")
+
+#Filter for only high risk UST sites
+levels(RUST_shp$ConfRisk)
+highrisk_RUST <- RUST_shp %>%
+  filter(ConfRisk == "H")
+```
+
+```{r maps}
+
+#Plot the data - basic maps to check code
 mapview(NC_Counties_shp) + 
   mapview(Landfills_shp, color = "black")
 
 ggplot() + 
   geom_sf(data = NC_Counties_shp,col='red') + 
-  geom_sf(data = Landfills_shp,col='blue')
+  geom_sf(data = Landfills_shp_mod,col='blue')
+
+ggplot() + 
+  geom_sf(data = NC_Counties_shp,col='red') + 
+  geom_sf(data = RUST_shp,col='blue')
+
 ```
 
 ```{r}
@@ -66,42 +88,55 @@ ggplot() +
 county_poverty_join <- NC_Counties_shp %>% 
   left_join(y = Poverty_NC,by = c("CO_NAME" =  "Name"))
 
-
+#Creating maps from basic data with counties
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
-  scale_fill_viridis(option = "cividis", direction = -1) +
+  scale_fill_viridis(direction = -1) +
   geom_sf(data = BF_shp, alpha = 0.4) +
  labs(fill = "% in Poverty") +
   ggtitle("Brownfield Sites in North Carolina")
 
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
-  scale_fill_viridis(option = "cividis", direction = -1) +
-  geom_sf(data = Landfills_shp) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = Landfills_shp_mod, alpha = 0.6) +
  labs(fill = "% in Poverty") +
   ggtitle("Landfill Sites in North Carolina")
 
 
-levels(RUST_shp$ConfRisk)
-
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
-  scale_fill_viridis(option = "cividis", direction = -1) +
-  geom_sf(data = RUST_shp) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = highrisk_RUST, alpha = 0.3, color = "black") +
  labs(fill = "% in Poverty") +
   ggtitle("RUST Sites in North Carolina")
 ```
 
 ```{r}
 
-mapview(county_poverty_join, zcol = "Poverty_Percent_allages", color = viridis) 
+#Cluster percent poverty to have discrete categories of low, medium, high
+test <- pam(x = Poverty_NC$Poverty_Percent_allages, k = 2, metric="manhattan")
+
+PAMClust = rep("NA", length(Poverty_NC$Poverty_Percent_allages))
+PAMClust[test$clustering == 1] = "Low"
+PAMClust[test$clustering == 2] = "High"
+Poverty_NC$Cluster = PAMClust
+
+#Count the number of landfills in each county
+Sitecount <- count(Landfills_shp_mod, Landfills_shp_mod$County)
+
+#Join count dataframe with percent poverty info
+Sitecount_join <- left_join(Sitecount, Poverty_NC, by = c("Landfills_shp_mod$County" = "Name"))
+Sitecount_join <- right_join(Poverty_NC, Sitecount, by = c("Name" = "Landfills_shp_mod$County"))
 
 
-as.data.frame(table(numbers))
+
+
+
+
+sum1 <- aggregate(Landfills_shp_mod, list(county_poverty_join$Cluster), FUN = count)
 
 ggplot() +
 geom_point(x= county_poverty_join$Poverty_Percent_allages , y= )
-
-count(Landfills_shp, Landfills_shp$County)
 
 ```

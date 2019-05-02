@@ -96,6 +96,7 @@ ggplot() +
  labs(fill = "% in Poverty") +
   ggtitle("Brownfield Sites in North Carolina")
 
+
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
   scale_fill_viridis(direction = -1) +

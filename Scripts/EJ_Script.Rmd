@@ -16,17 +16,32 @@ knitr::opts_chunk$set(echo = TRUE)
 library(sf)
 library(tidyverse)
 library(dplyr)
-library(leaflet)
-library(mapview)
 library(viridis)
-library(dichromat)
 library(cluster)
+library(stringr)
+library(fuzzyjoin)
+library(gridExtra)
 
 ```
 
 ```{r }
 
 Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
+Race <- read.csv("./Data/Processed/LINC_RaceData_2010.csv")
+Peak.Discharge <- read.csv("./Data/Processed/FilteredPeaks.csv") 
+
+Peak.Discharge_processed <- Peak.Discharge %>% select("county", "latitude_dd", "longitude_dd", "vdatum", "peak_date", "peak_stage")
+
+Race1 <- mutate(Race, WhitePerc = Race$White/Race$Total.Pop)
+Race2 <- mutate(Race1, BlackPerc = Race$Black/Race$Total.Pop)
+Race3 <- mutate(Race2, NativePerc = Race$Native/Race$Total.Pop)
+Race4 <- mutate(Race3, AsianPerc = Race$Asian/Race$Total.Pop)
+Race5 <- mutate(Race4, HispanicPerc = Race$Hispanic/Race$Total.Pop)
+Race6 <- mutate(Race5, OtherPerc = Race$Other/Race$Total.Pop)
+Race7 <- mutate(Race6, Haw_PacIsPerc = Race$Haw_PacIs/Race$Total.Pop)
+Race8 <- mutate(Race7, TwoPerc = Race$Two/Race$Total.Pop)
+Race_Processed <- mutate(Race8, MinorityPerc = (Race$Black + Race$Native + Race$Asian + Race$Hispanic + Race$Other + Race$Haw_PacIs + Race$Two)/Race$Total.Pop)
+
 
 ```
 
@@ -34,13 +49,13 @@ Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
 ```{r}
 #Read in Counties shapefile into an sf dataframe, filtering for just NC counties
 
-NC_Counties_shp <- st_read(dsn = "./Data/Spatial/NC_Counties.shp") 
-Landfills_shp <- st_read(dsn = "./Data/Spatial/ActivePermittedLandiflls.shp") 
-IH_shp <- st_read(dsn = "./Data/Spatial/IH_Sites.shp") 
-FRB_shp <- st_read(dsn = "./Data/Spatial/FRB_Sites.shp") 
-BF_shp <- st_read(dsn = "./Data/Spatial/BF_Sites.shp") 
-RUST_shp <- st_read(dsn = "./Data/Spatial/RUST.shp") 
-HW_shp <- st_read(dsn = "./Data/Spatial/HW_Sites.shp") 
+NC_Counties_shp <- st_read(dsn = "./Data/Spatial/NC_Counties.shp") #Geospatial data for NC Counties
+Landfills_shp <- st_read(dsn = "./Data/Spatial/ActivePermittedLandiflls.shp") #Active Landfills
+IH_shp <- st_read(dsn = "./Data/Spatial/IH_Sites.shp") #Hazardous substance spill and disposal sites 
+FRB_shp <- st_read(dsn = "./Data/Spatial/FRB_Sites.shp") #Superfund
+BF_shp <- st_read(dsn = "./Data/Spatial/BF_Sites.shp") #Brownfields
+RUST_shp <- st_read(dsn = "./Data/Spatial/RUST.shp") #Underground Storage Tanks
+HW_shp <- st_read(dsn = "./Data/Spatial/HW_Sites.shp") #Hazardous Waste Resource Conservation and Recovery Act
 
 
 NC_gages <- st_read(dsn = "./Data/Spatial/gagesII_9322_sept30_2011.shp") %>%
@@ -67,21 +82,6 @@ highrisk_RUST <- RUST_shp %>%
   filter(ConfRisk == "H")
 ```
 
-```{r maps}
-
-#Plot the data - basic maps to check code
-mapview(NC_Counties_shp) + 
-  mapview(Landfills_shp, color = "black")
-
-ggplot() + 
-  geom_sf(data = NC_Counties_shp,col='red') + 
-  geom_sf(data = Landfills_shp_mod,col='blue')
-
-ggplot() + 
-  geom_sf(data = NC_Counties_shp,col='red') + 
-  geom_sf(data = RUST_shp,col='blue')
-
-```
 
 ```{r}
 #Join poverty data to county shapefile
@@ -92,18 +92,30 @@ county_poverty_join <- NC_Counties_shp %>%
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
   scale_fill_viridis(direction = -1) +
-  geom_sf(data = BF_shp, alpha = 0.4) +
- labs(fill = "% in Poverty") +
-  ggtitle("Brownfield Sites in North Carolina")
-
-
-ggplot() + 
-  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
-  scale_fill_viridis(direction = -1) +
   geom_sf(data = Landfills_shp_mod, alpha = 0.6) +
  labs(fill = "% in Poverty") +
   ggtitle("Landfill Sites in North Carolina")
 
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = IH_shp, alpha = 0.3, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("IH Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = FRB_shp, alpha = 0.6, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("Superfund Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = BF_shp, alpha = 0.4) +
+ labs(fill = "% in Poverty") +
+  ggtitle("Brownfield Sites in North Carolina")
 
 ggplot() + 
   geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
@@ -111,6 +123,14 @@ ggplot() +
   geom_sf(data = highrisk_RUST, alpha = 0.3, color = "black") +
  labs(fill = "% in Poverty") +
   ggtitle("RUST Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = HW_shp, alpha = 0.3, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("Hazardous Waste Sites in North Carolina")
+
 ```
 
 ```{r}
@@ -123,21 +143,97 @@ PAMClust[test$clustering == 1] = "Low"
 PAMClust[test$clustering == 2] = "High"
 Poverty_NC$Cluster = PAMClust
 
+
 #Count the number of landfills in each county
-Sitecount <- count(Landfills_shp_mod, Landfills_shp_mod$County)
+Sitecount_Landfill <- count(Landfills_shp_mod, Landfills_shp_mod$County)
+
+#Count the number of IH sites in each county
+levels(IH_shp$SITECOUNTY) <- toupper(levels(IH_shp$SITECOUNTY)) #all caps
+Sitecount_IH <- count(IH_shp, IH_shp$SITECOUNTY) 
+
+#Count the number of Superfund sites in each county
+Sitecount_FRB <- count(FRB_shp, FRB_shp$SITE_COUNT) #most all caps - / exists
+
+#Count the number of Brownfield sites in each county
+levels(BF_shp$BF_County) <- toupper(levels(BF_shp$BF_County))
+Sitecount_BF <- count(BF_shp, BF_shp$BF_County)
+
+#Count the number of high risk USTs in each county
+levels(highrisk_RUST$County) <- toupper(levels(highrisk_RUST$County))
+Sitecount_RUST <- count(highrisk_RUST, highrisk_RUST$County)
+
+#Count the number of HW sites in each county
+Sitecount_HW <- count(HW_shp, HW_shp$LOC_COUNTY) #all caps
+
+
+#Join count dataframes with race info
+Sitecount_Landfill_join <- left_join(Sitecount_Landfill, Race_Processed, by = c("Landfills_shp_mod$County" = "County"))
+
+levels(Race_Processed$County) <- toupper(levels(Race_Processed$County))
+Sitecount_IH_join <- left_join(Sitecount_IH, Race_Processed, by = c("IH_shp$SITECOUNTY" = "County"))
+
+Sitecount_FRB_join <- left_join(Sitecount_FRB, Race_Processed, 
+  by = c("FRB_shp$SITE_COUNT" = "County"))
+
+Sitecount_BF_join <- left_join(Sitecount_BF, Race_Processed, by = c("BF_shp$BF_County" = "County"))
+
+Race_Processed_abv <- transform(Race_Processed, ABV = str_sub(Race_Processed$County, 1, 5))
+
+Sitecount_RUST_join <- left_join(Sitecount_RUST, Race_Processed_abv, by = c("highrisk_RUST$County" = "ABV"))
+
+Sitecount_HW_join <- left_join(Sitecount_HW, Race_Processed, by = c("HW_shp$LOC_COUNTY" = "County"))
+
+#Graph count data with race percent data
+Landfill_plot <- 
+  ggplot(Sitecount_Landfill_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count in Each County", y="Racial Minority Percent in Each County")
+
+IH_plot <- 
+  ggplot(Sitecount_IH_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count in Each County", y="Racial Minority Percent in Each County")
+
+FRB_plot <- 
+  ggplot(Sitecount_FRB_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count in Each County", y="Racial Minority Percent in Each County")
+
+BF_plot <- 
+  ggplot(Sitecount_BF_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count in Each County", y="Racial Minority Percent in Each County")
+
+RUST_plot <- 
+  ggplot(Sitecount_RUST_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count in Each County", y="Racial Minority Percent in Each County")
+
+HW_plot <- 
+  ggplot(Sitecount_HW_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+   labs(x="Site Count in Each County", y="Racial Minority Percent in Each County")
+
+  
+  
+
 
 #Join count dataframe with percent poverty info
 Sitecount_join <- left_join(Sitecount, Poverty_NC, by = c("Landfills_shp_mod$County" = "Name"))
-Sitecount_join <- right_join(Poverty_NC, Sitecount, by = c("Name" = "Landfills_shp_mod$County"))
+Sitecount_join <- right_join(Poverty_NC, Sitecount, by = c("Name" = 
+  "Landfills_shp_mod$County"))
 
-
-
+#Join count dataframe with race info
+Sitecount_join <- left_join(Sitecount, Race_Processed, by = c("Landfills_shp_mod$County" = "County"))
 
 
 
 sum1 <- aggregate(Landfills_shp_mod, list(county_poverty_join$Cluster), FUN = count)
-
-ggplot() +
-geom_point(x= county_poverty_join$Poverty_Percent_allages , y= )
 
 ```

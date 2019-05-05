@@ -55,12 +55,15 @@ mytheme <- theme_classic(base_size = 14) +
 
 There is significant research that indicates hazardous waste sites, especially those listed on the National Priorities List as a Superfund site, are disproportionately located in communities of color or low socioeconomic status (Burwell-Naney et al., 2013; Kramar, Anderson, Hilfer, Branden, Gutrich, 2018). In North Carolina, recent hurricanes have resulted in serious flooding in many parts of the state, creating concern as to whether Superfund sites and other hazardous waste sites were breached and might pose health effects to local communities. Given that natural disasters such as hurricanes and increased flooding is expect in North Carolina, it is important to understand if risks related to hazardous waste sites and flooding are posted to minority communities, as they tend to be low-capacity and less resilient to disasters. This information could be used by environmental justice leaders to advocate for policy changes or the implementation of safeguards to be put in place.
 
-I am using multiple datasets to answer my research question. I have downloaded geospatial data on hazardous waste site locations from North Carolina Department of Environmental Quality. Additionally, I have downloaded data from the U.S. Census Bureau's Small Area Income and Poverty Estimates (SAIPE) Program and  (U.S. Census Bureau, 2018).
-<Paragraph detailing your research question(s) and goals. What do you want to find out? Include a sentence (or a few) on the dataset you are using to answer this question - just enough to give your reader an idea of where you are going with the analysis.>
+During this analysis, I am interested in seeing if the number of hazardous waste sites is significantly greater in areas with a large percent of minority resident or a large amount of those in poverty. Additionally, for the areas with the highest site counts, I would like to see if they are at risk for flood events based on peak stage values. Poverty and race data by county will be used, as well as site data and peak stage data.
 
 \newpage
 
 # Dataset Information
+
+I am using multiple datasets to answer my research question. I have downloaded geospatial data on hazardous waste site locations from North Carolina Department of Environmental Quality. I have downloaded data with information about poverty and race from the U.S. Census Bureau's Small Area Income and Poverty Estimates (SAIPE) Program and (U.S. Census Bureau, 2018) and from the NC Budget and Management LINC data retrievel tool. Furthermore, I've obtained peak stage data for a few counties in North Carolina over that past five years from the U.S. Geological Survey.
+
+
 
 <Information on how the dataset for this analysis were collected, the data contained in the dataset, and any important pieces of information that are relevant to your analyses. This section should contain much of same information as the README file for the dataset but formatted in a way that is more narrative.>
 
@@ -69,7 +72,7 @@ Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
 Race <- read.csv("./Data/Processed/LINC_RaceData_2010.csv")
 Peak.Stage <- read.csv("./Data/Processed/FilteredPeaks.csv")  
 
-kable(cbind(Poverty_NC, Poverty_NC, Poverty_NC), "latex", booktabs = T) %>% kable_styling(latex_options = c("striped", "scale_down"))
+kable(Race, "latex", booktabs = T) 
 ```
 
 \newpage

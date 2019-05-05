@@ -1,0 +1,404 @@
+---
+output: 
+  pdf_document: 
+    keep_tex: yes
+    fig_caption: yes
+    number_sections: yes
+geometry: margin=2.54cm
+title: "Assessing the risk of contamination from hazardous sites due to flooding in North Carolina low-socioeconomic communities"  
+subtitle: "https://github.com/tristen0708/EJ_Project"
+author: "Tristen Townsend"
+abstract: "It is well known that hazardous waste sites tend to be more frequently sited in low-income communities, particularly communities of color. Proximity to hazardous waste sites have potential to create health risks, especially if communities are in regions more likely to be prone to flooding or extreme precipitation. This analysis serves to understand whether risks might exist for low-income communities in North Carolina. The number and type of sites in various counties has been analyzed in order to see if minority communities are more at risk." 
+fontsize: 12pt
+mainfont: Times New Roman
+---
+
+<Information in these brackets are used for annotating the RMarkdown file. They will not appear in the final version of the PDF document>
+
+\newpage
+\tableofcontents 
+\newpage
+
+<Setup the global options for the R chunks in your document>
+
+
+```{r setup, include=FALSE}
+# Set your working directory
+getwd()
+
+# Load your packages
+
+library(sf)
+library(tidyverse)
+library(dplyr)
+library(viridis)
+library(cluster)
+library(stringr)
+library(fuzzyjoin)
+library(gridExtra)
+
+# Set your ggplot theme
+mytheme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "top")
+
+```
+
+# Research Question and Rationale
+
+There is significant research that indicates hazardous waste sites, especially those listed on the National Priorities List as a Superfund site, are disproportionately located in communities of color or low socioeconomic status (Burwell-Naney et al., 2013; Kramar, Anderson, Hilfer, Branden, Gutrich, 2018). In North Carolina, recent hurricanes have resulted in serious flooding in many parts of the state, creating concern as to whether Superfund sites and other hazardous waste sites were breached and might pose health effects to local communities. Given that natural disasters such as hurricanes and increased flooding is expect in North Carolina, it is important to understand if risks related to hazardous waste sites and flooding are posted to minority communities, as they tend to be low-capacity and less resilient to disasters. This information could be used by environmental justice leaders to advocate for policy changes or the implementation of safeguards to be put in place.
+
+During this analysis, I am interested in seeing if the number of hazardous waste sites is significantly greater in areas with a large percent of minority resident or a large amount of those in poverty. Additionally, for the areas with the highest site counts, I would like to see if they are at risk for flood events based on peak stage values. Poverty and race data by county will be used, as well as site data and peak stage data.
+
+\newpage
+
+# Dataset Information
+
+I am using multiple datasets to answer my research question. I have downloaded geospatial data on hazardous waste site locations from North Carolina Department of Environmental Quality. I have downloaded data with information about poverty and race from the U.S. Census Bureau's Small Area Income and Poverty Estimates (SAIPE) Program and (U.S. Census Bureau, 2018) and from the NC Budget and Management LINC data retrievel tool. Furthermore, I've obtained peak stage data for a few counties in North Carolina over that past five years from the U.S. Geological Survey.
+
+
+```{r table}
+Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
+Race <- read.csv("./Data/Processed/LINC_RaceData_2010.csv")
+Peak.Stage <- read.csv("./Data/Processed/FilteredPeaks.csv")  
+
+```
+
+\newpage
+
+# Exploratory Data Analysis and Wrangling
+
+
+```{r load and explore}
+Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
+Race <- read.csv("./Data/Processed/LINC_RaceData_2010.csv")
+Peak.Stage <- read.csv("./Data/Processed/FilteredPeaks.csv") 
+
+Peak.Stage_processed <- Peak.Stage %>% select("county", "latitude_dd",
+    "longitude_dd", "vdatum", "peak_date", "peak_stage")
+
+Race1 <- mutate(Race, WhitePerc = Race$White/Race$Total.Pop)
+Race2 <- mutate(Race1, BlackPerc = Race$Black/Race$Total.Pop)
+Race3 <- mutate(Race2, NativePerc = Race$Native/Race$Total.Pop)
+Race4 <- mutate(Race3, AsianPerc = Race$Asian/Race$Total.Pop)
+Race5 <- mutate(Race4, HispanicPerc = Race$Hispanic/Race$Total.Pop)
+Race6 <- mutate(Race5, OtherPerc = Race$Other/Race$Total.Pop)
+Race7 <- mutate(Race6, Haw_PacIsPerc = Race$Haw_PacIs/Race$Total.Pop)
+Race8 <- mutate(Race7, TwoPerc = Race$Two/Race$Total.Pop)
+Race_Processed <- mutate(Race8, MinorityPerc = (Race$Black + 
+    Race$Native + Race$Asian + Race$Hispanic + Race$Other + 
+    Race$Haw_PacIs + Race$Two)/Race$Total.Pop)
+
+#Explore race and poverty data
+shapiro.test(Race_Processed$MinorityPerc) #p-value = 0.0005985
+shapiro.test(Poverty_NC$Poverty_Percent_allages) #p-value 0.01881 
+
+#From the output, both p-values are < 0.05 implying that the distribution 
+#of the data are significantly different from normal distribution. 
+#In other words, we cannot assume the normality for either data sets.
+
+#Explore discharge data
+Peak.Stage_avg <- Peak.Stage_processed %>% 
+  group_by(county) %>%
+  summarise(yearly_average = mean(peak_stage))
+  
+shapiro.test(Peak.Stage_avg$yearly_average) #p-value = 0.288 normal!
+#From the output, the p-value is < 0.05 implying that the distribution 
+#of the data are significantly different from normal distribution. 
+#In other words, we cannot assume the normality for either data sets.
+
+```
+
+```{r exploratory graphs, echo=FALSE}
+ggplot(Race_Processed, aes(x = MinorityPerc)) +
+  geom_freqpoly() +
+  scale_x_continuous(limits = c(0, 1))
+qqnorm(Race_Processed$MinorityPerc); qqline(Race_Processed$MinorityPerc)
+
+ggplot(Poverty_NC, aes(x = Poverty_Percent_allages)) +
+  geom_freqpoly()
+qqnorm(Poverty_NC$Poverty_Percent_allages); qqline(Poverty_NC$Poverty_Percent_allages)
+```
+
+```{r load}
+#Read in Counties shapefile into an sf dataframe, 
+#filtering for just NC counties
+
+NC_Counties_shp <- st_read(dsn = "./Data/Spatial/NC_Counties.shp") 
+#Geospatial data for NC Counties
+Landfills_shp <- st_read(dsn = "./Data/Spatial/ActivePermittedLandiflls.shp")
+#Active Landfills
+IH_shp <- st_read(dsn = "./Data/Spatial/IH_Sites.shp") 
+#Hazardous substance spill and disposal sites 
+FRB_shp <- st_read(dsn = "./Data/Spatial/FRB_Sites.shp") 
+#Superfund
+BF_shp <- st_read(dsn = "./Data/Spatial/BF_Sites.shp") 
+#Brownfields
+RUST_shp <- st_read(dsn = "./Data/Spatial/RUST.shp") 
+#Underground Storage Tanks
+HW_shp <- st_read(dsn = "./Data/Spatial/HW_Sites.shp") 
+#Hazardous Waste Resource Conservation and Recovery Act
+```
+
+
+```{r wrangling}
+#Reveal the CRS of the counties features so they can be graphed 
+#with NC Counties shapefile
+st_crs(NC_Counties_shp)
+st_crs(Landfills_shp)
+st_crs(IH_shp)
+st_crs(FRB_shp)
+st_crs(BF_shp)
+st_crs(RUST_shp)
+st_crs(HW_shp)
+
+#There is one row with an incorecct location; 
+#This site will be omitted in order to proceed with mapping data
+Landfills_shp_mod <- subset(Landfills_shp, !LocationID == "P1252")
+
+#Filter RUST dataset for only high risk UST sites since this inforation 
+#is available and due to the large amount of sites
+levels(RUST_shp$ConfRisk)
+highrisk_RUST <- RUST_shp %>%
+  filter(ConfRisk == "H")
+
+#Join poverty data to county geospatial data
+county_poverty_join <- NC_Counties_shp %>% 
+  left_join(y = Poverty_NC,by = c("CO_NAME" =  "Name"))
+
+
+#Count the number of sites in each county; In some, the names of 
+#counties are not in all capital letters. In order to address 
+#future problems with joins, some were converted to all capital letters.
+Sitecount_Landfill <- count(Landfills_shp_mod, Landfills_shp_mod$County)
+
+levels(IH_shp$SITECOUNTY) <- toupper(levels(IH_shp$SITECOUNTY)) #all caps
+Sitecount_IH <- count(IH_shp, IH_shp$SITECOUNTY) 
+
+Sitecount_FRB <- count(FRB_shp, FRB_shp$SITE_COUNT) 
+
+levels(BF_shp$BF_County) <- toupper(levels(BF_shp$BF_County))
+Sitecount_BF <- count(BF_shp, BF_shp$BF_County)
+
+levels(highrisk_RUST$County) <- toupper(levels(highrisk_RUST$County))
+Sitecount_RUST <- count(highrisk_RUST, highrisk_RUST$County)
+
+Sitecount_HW <- count(HW_shp, HW_shp$LOC_COUNTY)
+
+
+#Join count dataframes with race info. Needed to make county names in
+#Race_Processed data set capitalized so left join would work. 
+#In one case, Race_Processed data needed to add a column with 
+#abbreviations in order to join to the RUST data set.
+Sitecount_Landfill_join <- left_join(Sitecount_Landfill, Race_Processed, 
+  by = c("Landfills_shp_mod$County" = "County"))
+
+levels(Race_Processed$County) <- toupper(levels(Race_Processed$County))
+Sitecount_IH_join <- left_join(Sitecount_IH, Race_Processed, 
+  by = c("IH_shp$SITECOUNTY" = "County"))
+
+Sitecount_FRB_join <- left_join(Sitecount_FRB, Race_Processed, 
+  by = c("FRB_shp$SITE_COUNT" = "County"))
+
+Sitecount_BF_join <- left_join(Sitecount_BF, Race_Processed, 
+  by = c("BF_shp$BF_County" = "County"))
+
+Race_Processed_abv <- transform(Race_Processed, 
+  ABV = str_sub(Race_Processed$County, 1, 5))
+
+Sitecount_RUST_join <- left_join(Sitecount_RUST, Race_Processed_abv, by = c("highrisk_RUST$County" = "ABV"))
+
+Sitecount_HW_join <- left_join(Sitecount_HW, Race_Processed, by = c("HW_shp$LOC_COUNTY" = "County"))
+
+```
+
+\newpage
+
+# Analysis
+<Include R chunks for 3+ statistical tests (display code and output) and 3+ final visualization graphs (display graphs only).>
+
+```{r statistical tests}
+#Landfill
+#Create clusters for low or high minority percent in each county
+test <- pam(x = Sitecount_Landfill_join$MinorityPerc, k = 2, metric="manhattan")
+
+PAMClust = rep("NA", length(Sitecount_Landfill_join$MinorityPerc))
+PAMClust[test$clustering == 1] = "High"
+PAMClust[test$clustering == 2] = "Low"
+Sitecount_Landfill_join$Cluster = PAMClust
+
+LF.count <- count(Sitecount_Landfill_join, Sitecount_Landfill_join$Cluster)
+wilcox.test(Sitecount_Landfill_join$n ~ Sitecount_Landfill_join$Cluster)
+#P-value = 0.3187
+
+#IH
+test1 <- pam(x = Sitecount_IH_join$MinorityPerc, k = 2, metric="manhattan")
+PAMClust1 = rep("NA", length(Sitecount_IH_join$MinorityPerc))
+PAMClust1[test1$clustering == 1] = "High"
+PAMClust1[test1$clustering == 2] = "Low"
+Sitecount_IH_join$Cluster = PAMClust1
+
+IH.count <- count(Sitecount_IH_join, Sitecount_IH_join$Cluster)
+wilcox.test(Sitecount_IH_join$n ~ Sitecount_IH_join$Cluster)
+#P-value = 0.6696
+
+#FRB -error
+#Sitecount_FRB_join$MinorityPerc = na.omit(Sitecount_FRB_join$MinorityPerc)
+#test2 <- pam(x = FRB_x, k = 2, metric="manhattan")
+#PAMClust2 = rep("NA", length(Sitecount_FRB_join$MinorityPerc))
+#PAMClust2[test2$clustering == 1] = "High"
+#PAMClust2[test2$clustering == 2] = "Low"
+#Sitecount_FRB_join$Cluster = PAMClust2
+
+#FRB.count <- count(Sitecount_FRB_join, Sitecount_FRB_join$Cluster)
+#wilcox.test(Sitecount_IH_join$n ~ Sitecount_FRB_join$Cluster)
+
+#BF
+test3 <- pam(x = Sitecount_BF_join$MinorityPerc, k = 2, metric="manhattan")
+PAMClust3 = rep("NA", length(Sitecount_BF_join$MinorityPerc))
+PAMClust3[test3$clustering == 1] = "High"
+PAMClust3[test3$clustering == 2] = "Low"
+Sitecount_BF_join$Cluster = PAMClust3
+
+BF.count <- count(Sitecount_BF_join, Sitecount_BF_join$Cluster)
+wilcox.test(Sitecount_BF_join$n ~ Sitecount_BF_join$Cluster)
+#P-value = 0.6803
+
+#RUST
+test4 <- pam(x = Sitecount_RUST_join$MinorityPerc, k = 2, metric="manhattan")
+PAMClust4 = rep("NA", length(Sitecount_RUST_join$MinorityPerc))
+PAMClust4[test4$clustering == 1] = "High"
+PAMClust4[test4$clustering == 2] = "Low"
+Sitecount_RUST_join$Cluster = PAMClust4
+
+RUST.count <- count(Sitecount_RUST_join, Sitecount_RUST_join$Cluster)
+wilcox.test(Sitecount_RUST_join$n ~ Sitecount_RUST_join$Cluster)
+#P-value = 0.7398
+
+#HW
+test5 <- pam(x = Sitecount_HW_join$MinorityPerc, k = 2, metric="manhattan")
+PAMClust5 = rep("NA", length(Sitecount_HW_join$MinorityPerc))
+PAMClust5[test5$clustering == 1] = "High"
+PAMClust5[test5$clustering == 2] = "Low"
+Sitecount_HW_join$Cluster = PAMClust5
+
+HW.count <- count(Sitecount_HW_join, Sitecount_HW_join$Cluster)
+wilcox.test(Sitecount_HW_join$n ~ Sitecount_HW_join$Cluster)
+#P-value = 0.4177
+
+```
+
+```{r final visualizations, echo=FALSE}
+
+#Graph count data with race percent data
+Landfill_plot <- 
+  ggplot(Sitecount_Landfill_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count", y="Racial Minority Percent") +
+  ggtitle("Active Landfill Site Count by Racial Minority Percentages in NC Counties")
+Landfill_plot
+
+IH_plot <- 
+  ggplot(Sitecount_IH_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count", y="Racial Minority Percent") +
+  ggtitle("Hazardous Substance Spill & Disposal Site Count")
+IH_plot
+
+FRB_plot <- 
+  ggplot(Sitecount_FRB_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7) +
+  labs(x="Site Count", y="Racial Minority Percent") +
+  ggtitle("Superfund Site Count by Racial Minority Percentages in NC Counties")
+FRB_plot
+
+BF_plot <- 
+  ggplot(Sitecount_BF_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count", y="Racial Minority Percent")+
+  ggtitle("Brownfield Site Count by Racial Minority Percentages in NC Counties")
+BF_plot
+
+RUST_plot <- 
+  ggplot(Sitecount_RUST_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count", y="Racial Minority Percent")+
+  ggtitle("High-Risk Underground Storage Tank Site Count")
+RUST_plot
+
+HW_plot <- 
+  ggplot(Sitecount_HW_join, aes(x=n , y=MinorityPerc * 100)) +
+  scale_y_continuous(limits=c(0, 100)) +
+  geom_point(alpha=0.7, color="blue") +
+  labs(x="Site Count", y="Racial Minority Percent")+
+  ggtitle("Hazardous Waste Site Count by Racial Minority % in NC Counties")
+HW_plot
+
+#Creating maps from basic data with counties
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = Landfills_shp_mod, alpha = 0.6) +
+ labs(fill = "% in Poverty") +
+  ggtitle("Landfill Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = IH_shp, alpha = 0.3, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("IH Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = FRB_shp, alpha = 0.6, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("Superfund Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = BF_shp, alpha = 0.4) +
+ labs(fill = "% in Poverty") +
+  ggtitle("Brownfield Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = highrisk_RUST, alpha = 0.3, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("RUST Sites in North Carolina")
+
+ggplot() + 
+  geom_sf(data = county_poverty_join, aes(fill=county_poverty_join$Poverty_Percent_allages)) +
+  scale_fill_viridis(direction = -1) +
+  geom_sf(data = HW_shp, alpha = 0.3, color = "black") +
+ labs(fill = "% in Poverty") +
+  ggtitle("Hazardous Waste Sites in North Carolina")
+
+```
+
+<Include text sections to accompany these R chunks to explain the reasoning behind your workflow, rationale for your approach, and the justification of meeting or failing to meet assumptions of tests.>
+
+
+\newpage
+
+# Summary and Conclusions
+<Summarize your major findings from your analyses. What conclusions do you draw from your findings? Make sure to apply this to a broader application for the research question you have answered.>
+
+Based on my performed analysis, there is no significant difference in the number of hazardous waste sites that exist in counties with majority racial minority populations. 
+
+
+\newpage
+
+#References
+
+U.S. Census Bureau. (2018). Small Area Income and Poverty Estimates (SAIPE) Program. Retrieved from https://www.census.gov/programs-surveys/saipe/about.html
+
+NC Budget and Management. (2019). LINC. Retrieved from https://www.osbm.nc.gov/facts-figures/linc

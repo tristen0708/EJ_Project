@@ -1,0 +1,859 @@
+\documentclass[12pt,]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+    \setmainfont[]{Times New Roman}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Assessing the risk of contamination from hazardous sites due to flooding in North Carolina low-socioeconomic communities},
+            pdfauthor={Tristen Townsend},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Assessing the risk of contamination from hazardous sites due to flooding
+in North Carolina low-socioeconomic communities}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \subtitle{\url{https://github.com/tristen0708/EJ_Project}}
+  \author{Tristen Townsend}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+\begin{abstract}
+It is well known that hazardous waste sites tend to be more frequently
+sited in low-income communities, particularly communities of color.
+Proximity to hazardous waste sites have potential to create health
+risks, especially if communities are in regions more likely to be prone
+to flooding or extreme precipitation. This analysis serves to understand
+whether risks might exist for low-income communities in North Carolina.
+The number and type of sites in various counties has been analyzed in
+order to see if minority communities are more at risk.
+\end{abstract}
+
+\newpage
+
+\tableofcontents  \newpage
+
+\section{Research Question and
+Rationale}\label{research-question-and-rationale}
+
+There is significant research that indicates hazardous waste sites,
+especially those listed on the National Priorities List as a Superfund
+site, are disproportionately located in communities of color or low
+socioeconomic status (Burwell-Naney et al., 2013; Kramar, Anderson,
+Hilfer, Branden, Gutrich, 2018). In North Carolina, recent hurricanes
+have resulted in serious flooding in many parts of the state, creating
+concern as to whether Superfund sites and other hazardous waste sites
+were breached and might pose health effects to local communities. Given
+that natural disasters such as hurricanes and increased flooding is
+expect in North Carolina, it is important to understand if risks related
+to hazardous waste sites and flooding are posted to minority
+communities, as they tend to be low-capacity and less resilient to
+disasters. This information could be used by environmental justice
+leaders to advocate for policy changes or the implementation of
+safeguards to be put in place.
+
+During this analysis, I am interested in seeing if the number of
+hazardous waste sites is significantly greater in areas with a large
+percent of minority resident or a large amount of those in poverty.
+Additionally, for the areas with the highest site counts, I would like
+to see if they are at risk for flood events based on peak stage values.
+Poverty and race data by county will be used, as well as site data and
+peak stage data.
+
+\newpage
+
+\section{Dataset Information}\label{dataset-information}
+
+I am using multiple datasets to answer my research question. I have
+downloaded geospatial data on hazardous waste site locations from North
+Carolina Department of Environmental Quality. I have downloaded data
+with information about poverty and race from the U.S. Census Bureau's
+Small Area Income and Poverty Estimates (SAIPE) Program and (U.S. Census
+Bureau, 2018) and from the NC Budget and Management LINC data retrievel
+tool. Furthermore, I've obtained peak stage data for a few counties in
+North Carolina over that past five years from the U.S. Geological
+Survey.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Poverty_NC <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/NC_Poverty_processed.csv"}\NormalTok{)}
+\NormalTok{Race <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/LINC_RaceData_2010.csv"}\NormalTok{)}
+\NormalTok{Peak.Stage <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/FilteredPeaks.csv"}\NormalTok{)  }
+\end{Highlighting}
+\end{Shaded}
+
+\newpage
+
+\section{Exploratory Data Analysis and
+Wrangling}\label{exploratory-data-analysis-and-wrangling}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Poverty_NC <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/NC_Poverty_processed.csv"}\NormalTok{)}
+\NormalTok{Race <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/LINC_RaceData_2010.csv"}\NormalTok{)}
+\NormalTok{Peak.Stage <-}\StringTok{ }\KeywordTok{read.csv}\NormalTok{(}\StringTok{"./Data/Processed/FilteredPeaks.csv"}\NormalTok{) }
+
+\NormalTok{Peak.Stage_processed <-}\StringTok{ }\NormalTok{Peak.Stage }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(}\StringTok{"county"}\NormalTok{, }\StringTok{"latitude_dd"}\NormalTok{,}
+    \StringTok{"longitude_dd"}\NormalTok{, }\StringTok{"vdatum"}\NormalTok{, }\StringTok{"peak_date"}\NormalTok{, }\StringTok{"peak_stage"}\NormalTok{)}
+
+\NormalTok{Race1 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race, }\DataTypeTok{WhitePerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{White}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race2 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race1, }\DataTypeTok{BlackPerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Black}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race3 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race2, }\DataTypeTok{NativePerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Native}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race4 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race3, }\DataTypeTok{AsianPerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Asian}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race5 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race4, }\DataTypeTok{HispanicPerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Hispanic}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race6 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race5, }\DataTypeTok{OtherPerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Other}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race7 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race6, }\DataTypeTok{Haw_PacIsPerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Haw_PacIs}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race8 <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race7, }\DataTypeTok{TwoPerc =}\NormalTok{ Race}\OperatorTok{$}\NormalTok{Two}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+\NormalTok{Race_Processed <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(Race8, }\DataTypeTok{MinorityPerc =}\NormalTok{ (Race}\OperatorTok{$}\NormalTok{Black }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Race}\OperatorTok{$}\NormalTok{Native }\OperatorTok{+}\StringTok{ }\NormalTok{Race}\OperatorTok{$}\NormalTok{Asian }\OperatorTok{+}\StringTok{ }\NormalTok{Race}\OperatorTok{$}\NormalTok{Hispanic }\OperatorTok{+}\StringTok{ }\NormalTok{Race}\OperatorTok{$}\NormalTok{Other }\OperatorTok{+}\StringTok{ }
+\StringTok{    }\NormalTok{Race}\OperatorTok{$}\NormalTok{Haw_PacIs }\OperatorTok{+}\StringTok{ }\NormalTok{Race}\OperatorTok{$}\NormalTok{Two)}\OperatorTok{/}\NormalTok{Race}\OperatorTok{$}\NormalTok{Total.Pop)}
+
+\CommentTok{#Explore race and poverty data}
+\KeywordTok{shapiro.test}\NormalTok{(Race_Processed}\OperatorTok{$}\NormalTok{MinorityPerc) }\CommentTok{#p-value = 0.0005985}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Race_Processed$MinorityPerc
+## W = 0.94783, p-value = 0.0005985
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{shapiro.test}\NormalTok{(Poverty_NC}\OperatorTok{$}\NormalTok{Poverty_Percent_allages) }\CommentTok{#p-value 0.01881 }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Poverty_NC$Poverty_Percent_allages
+## W = 0.96908, p-value = 0.01881
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#From the output, both p-values are < 0.05 implying that the distribution }
+\CommentTok{#of the data are significantly different from normal distribution. }
+\CommentTok{#In other words, we cannot assume the normality for either data sets.}
+
+\CommentTok{#Explore discharge data}
+\NormalTok{Peak.Stage_avg <-}\StringTok{ }\NormalTok{Peak.Stage_processed }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(county) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{yearly_average =} \KeywordTok{mean}\NormalTok{(peak_stage))}
+  
+\KeywordTok{shapiro.test}\NormalTok{(Peak.Stage_avg}\OperatorTok{$}\NormalTok{yearly_average) }\CommentTok{#p-value = 0.288 normal!}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  Peak.Stage_avg$yearly_average
+## W = 0.9346, p-value = 0.288
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#From the output, the p-value is < 0.05 implying that the distribution }
+\CommentTok{#of the data are significantly different from normal distribution. }
+\CommentTok{#In other words, we cannot assume the normality for either data sets.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 1164 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_path).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/exploratory graphs-1.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/exploratory graphs-2.pdf}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/exploratory graphs-3.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/exploratory graphs-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Read in Counties shapefile into an sf dataframe, }
+\CommentTok{#filtering for just NC counties}
+
+\NormalTok{NC_Counties_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/NC_Counties.shp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `NC_Counties' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/NC_Counties.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 100 features and 9 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -84.32162 ymin: 33.83437 xmax: -75.45998 ymax: 36.58841
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Geospatial data for NC Counties}
+\NormalTok{Landfills_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/ActivePermittedLandiflls.shp"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `ActivePermittedLandiflls' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/ActivePermittedLandiflls.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 177 features and 9 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -1.797693e+308 ymin: -1.797693e+308 xmax: -75.49015 ymax: 36.5332
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Active Landfills}
+\NormalTok{IH_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/IH_Sites.shp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `IH_Sites' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/IH_Sites.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 1917 features and 13 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -83.96576 ymin: 33.9127 xmax: -75.52278 ymax: 36.54823
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Hazardous substance spill and disposal sites }
+\NormalTok{FRB_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/FRB_Sites.shp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `FRB_Sites' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/FRB_Sites.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 70 features and 24 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -9246629 ymin: 4057672 xmax: -8407034 ymax: 4358145
+## epsg (SRID):    3857
+## proj4string:    +proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Superfund}
+\NormalTok{BF_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/BF_Sites.shp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `BF_Sites' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/BF_Sites.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 398 features and 9 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: 693972.8 ymin: 174551.3 xmax: 2827425 ymax: 1024565
+## epsg (SRID):    NA
+## proj4string:    +proj=lcc +lat_1=34.33333333333334 +lat_2=36.16666666666666 +lat_0=33.75 +lon_0=-79 +x_0=609601.2199999997 +y_0=0 +datum=NAD83 +units=us-ft +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Brownfields}
+\NormalTok{RUST_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/RUST.shp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `RUST' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/RUST.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 30212 features and 28 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -84.31466 ymin: 33.87549 xmax: -75.46581 ymax: 36.567
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Underground Storage Tanks}
+\NormalTok{HW_shp <-}\StringTok{ }\KeywordTok{st_read}\NormalTok{(}\DataTypeTok{dsn =} \StringTok{"./Data/Spatial/HW_Sites.shp"}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Reading layer `HW_Sites' from data source `/Users/Tristen/OneDrive - Duke University/Spring 2019/Data Analytics/EJ_Project/Data/Spatial/HW_Sites.shp' using driver `ESRI Shapefile'
+## Simple feature collection with 2577 features and 21 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -84.02775 ymin: 33.89647 xmax: -75.60355 ymax: 36.53089
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Hazardous Waste Resource Conservation and Recovery Act}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Reveal the CRS of the counties features so they can be graphed }
+\CommentTok{#with NC Counties shapefile}
+\KeywordTok{st_crs}\NormalTok{(NC_Counties_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   EPSG: 4326 
+##   proj4string: "+proj=longlat +datum=WGS84 +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{st_crs}\NormalTok{(Landfills_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   EPSG: 4326 
+##   proj4string: "+proj=longlat +datum=WGS84 +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{st_crs}\NormalTok{(IH_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   EPSG: 4326 
+##   proj4string: "+proj=longlat +datum=WGS84 +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{st_crs}\NormalTok{(FRB_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   EPSG: 3857 
+##   proj4string: "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{st_crs}\NormalTok{(BF_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   No EPSG code
+##   proj4string: "+proj=lcc +lat_1=34.33333333333334 +lat_2=36.16666666666666 +lat_0=33.75 +lon_0=-79 +x_0=609601.2199999997 +y_0=0 +datum=NAD83 +units=us-ft +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{st_crs}\NormalTok{(RUST_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   EPSG: 4326 
+##   proj4string: "+proj=longlat +datum=WGS84 +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{st_crs}\NormalTok{(HW_shp)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Coordinate Reference System:
+##   EPSG: 4326 
+##   proj4string: "+proj=longlat +datum=WGS84 +no_defs"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#There is one row with an incorecct location; }
+\CommentTok{#This site will be omitted in order to proceed with mapping data}
+\NormalTok{Landfills_shp_mod <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(Landfills_shp, }\OperatorTok{!}\NormalTok{LocationID }\OperatorTok{==}\StringTok{ "P1252"}\NormalTok{)}
+
+\CommentTok{#Filter RUST dataset for only high risk UST sites since this inforation }
+\CommentTok{#is available and due to the large amount of sites}
+\KeywordTok{levels}\NormalTok{(RUST_shp}\OperatorTok{$}\NormalTok{ConfRisk)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "H" "I" "l" "L" "U"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{highrisk_RUST <-}\StringTok{ }\NormalTok{RUST_shp }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(ConfRisk }\OperatorTok{==}\StringTok{ "H"}\NormalTok{)}
+
+\CommentTok{#Join poverty data to county geospatial data}
+\NormalTok{county_poverty_join <-}\StringTok{ }\NormalTok{NC_Counties_shp }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(}\DataTypeTok{y =}\NormalTok{ Poverty_NC,}\DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"CO_NAME"}\NormalTok{ =}\StringTok{  "Name"}\NormalTok{))}
+
+
+\CommentTok{#Count the number of sites in each county; In some, the names of }
+\CommentTok{#counties are not in all capital letters. In order to address }
+\CommentTok{#future problems with joins, some were converted to all capital letters.}
+\NormalTok{Sitecount_Landfill <-}\StringTok{ }\KeywordTok{count}\NormalTok{(Landfills_shp_mod, Landfills_shp_mod}\OperatorTok{$}\NormalTok{County)}
+
+\KeywordTok{levels}\NormalTok{(IH_shp}\OperatorTok{$}\NormalTok{SITECOUNTY) <-}\StringTok{ }\KeywordTok{toupper}\NormalTok{(}\KeywordTok{levels}\NormalTok{(IH_shp}\OperatorTok{$}\NormalTok{SITECOUNTY)) }\CommentTok{#all caps}
+\NormalTok{Sitecount_IH <-}\StringTok{ }\KeywordTok{count}\NormalTok{(IH_shp, IH_shp}\OperatorTok{$}\NormalTok{SITECOUNTY) }
+
+\NormalTok{Sitecount_FRB <-}\StringTok{ }\KeywordTok{count}\NormalTok{(FRB_shp, FRB_shp}\OperatorTok{$}\NormalTok{SITE_COUNT) }
+
+\KeywordTok{levels}\NormalTok{(BF_shp}\OperatorTok{$}\NormalTok{BF_County) <-}\StringTok{ }\KeywordTok{toupper}\NormalTok{(}\KeywordTok{levels}\NormalTok{(BF_shp}\OperatorTok{$}\NormalTok{BF_County))}
+\NormalTok{Sitecount_BF <-}\StringTok{ }\KeywordTok{count}\NormalTok{(BF_shp, BF_shp}\OperatorTok{$}\NormalTok{BF_County)}
+
+\KeywordTok{levels}\NormalTok{(highrisk_RUST}\OperatorTok{$}\NormalTok{County) <-}\StringTok{ }\KeywordTok{toupper}\NormalTok{(}\KeywordTok{levels}\NormalTok{(highrisk_RUST}\OperatorTok{$}\NormalTok{County))}
+\NormalTok{Sitecount_RUST <-}\StringTok{ }\KeywordTok{count}\NormalTok{(highrisk_RUST, highrisk_RUST}\OperatorTok{$}\NormalTok{County)}
+
+\NormalTok{Sitecount_HW <-}\StringTok{ }\KeywordTok{count}\NormalTok{(HW_shp, HW_shp}\OperatorTok{$}\NormalTok{LOC_COUNTY)}
+
+
+\CommentTok{#Join count dataframes with race info. Needed to make county names in}
+\CommentTok{#Race_Processed data set capitalized so left join would work. }
+\CommentTok{#In one case, Race_Processed data needed to add a column with }
+\CommentTok{#abbreviations in order to join to the RUST data set.}
+\NormalTok{Sitecount_Landfill_join <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Sitecount_Landfill, Race_Processed, }
+  \DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"Landfills_shp_mod$County"}\NormalTok{ =}\StringTok{ "County"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `Landfills_shp_mod$County`/`County` joining factors with
+## different levels, coercing to character vector
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{levels}\NormalTok{(Race_Processed}\OperatorTok{$}\NormalTok{County) <-}\StringTok{ }\KeywordTok{toupper}\NormalTok{(}\KeywordTok{levels}\NormalTok{(Race_Processed}\OperatorTok{$}\NormalTok{County))}
+\NormalTok{Sitecount_IH_join <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Sitecount_IH, Race_Processed, }
+  \DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"IH_shp$SITECOUNTY"}\NormalTok{ =}\StringTok{ "County"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `IH_shp$SITECOUNTY`/`County` joining factors with different
+## levels, coercing to character vector
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Sitecount_FRB_join <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Sitecount_FRB, Race_Processed, }
+  \DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"FRB_shp$SITE_COUNT"}\NormalTok{ =}\StringTok{ "County"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `FRB_shp$SITE_COUNT`/`County` joining factors with
+## different levels, coercing to character vector
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Sitecount_BF_join <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Sitecount_BF, Race_Processed, }
+  \DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"BF_shp$BF_County"}\NormalTok{ =}\StringTok{ "County"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `BF_shp$BF_County`/`County` joining factors with different
+## levels, coercing to character vector
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Race_Processed_abv <-}\StringTok{ }\KeywordTok{transform}\NormalTok{(Race_Processed, }
+  \DataTypeTok{ABV =} \KeywordTok{str_sub}\NormalTok{(Race_Processed}\OperatorTok{$}\NormalTok{County, }\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{))}
+
+\NormalTok{Sitecount_RUST_join <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Sitecount_RUST, Race_Processed_abv, }\DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"highrisk_RUST$County"}\NormalTok{ =}\StringTok{ "ABV"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `highrisk_RUST$County`/`ABV` joining factors with different
+## levels, coercing to character vector
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Sitecount_HW_join <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(Sitecount_HW, Race_Processed, }\DataTypeTok{by =} \KeywordTok{c}\NormalTok{(}\StringTok{"HW_shp$LOC_COUNTY"}\NormalTok{ =}\StringTok{ "County"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `HW_shp$LOC_COUNTY`/`County` joining factors with different
+## levels, coercing to character vector
+\end{verbatim}
+
+\newpage
+
+\section{Analysis}\label{analysis}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Landfill}
+\CommentTok{#Create clusters for low or high minority percent in each county}
+\NormalTok{test <-}\StringTok{ }\KeywordTok{pam}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Sitecount_Landfill_join}\OperatorTok{$}\NormalTok{MinorityPerc, }\DataTypeTok{k =} \DecValTok{2}\NormalTok{, }\DataTypeTok{metric=}\StringTok{"manhattan"}\NormalTok{)}
+
+\NormalTok{PAMClust =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{"NA"}\NormalTok{, }\KeywordTok{length}\NormalTok{(Sitecount_Landfill_join}\OperatorTok{$}\NormalTok{MinorityPerc))}
+\NormalTok{PAMClust[test}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{] =}\StringTok{ "High"}
+\NormalTok{PAMClust[test}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{] =}\StringTok{ "Low"}
+\NormalTok{Sitecount_Landfill_join}\OperatorTok{$}\NormalTok{Cluster =}\StringTok{ }\NormalTok{PAMClust}
+
+\NormalTok{LF.count <-}\StringTok{ }\KeywordTok{count}\NormalTok{(Sitecount_Landfill_join, Sitecount_Landfill_join}\OperatorTok{$}\NormalTok{Cluster)}
+\KeywordTok{wilcox.test}\NormalTok{(Sitecount_Landfill_join}\OperatorTok{$}\NormalTok{n }\OperatorTok{~}\StringTok{ }\NormalTok{Sitecount_Landfill_join}\OperatorTok{$}\NormalTok{Cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in wilcox.test.default(x = c(4L, 1L, 1L, 1L, 2L, 4L, 8L, 1L, 3L, :
+## cannot compute exact p-value with ties
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Sitecount_Landfill_join$n by Sitecount_Landfill_join$Cluster
+## W = 691.5, p-value = 0.3187
+## alternative hypothesis: true location shift is not equal to 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#P-value = 0.3187}
+
+\CommentTok{#IH}
+\NormalTok{test1 <-}\StringTok{ }\KeywordTok{pam}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Sitecount_IH_join}\OperatorTok{$}\NormalTok{MinorityPerc, }\DataTypeTok{k =} \DecValTok{2}\NormalTok{, }\DataTypeTok{metric=}\StringTok{"manhattan"}\NormalTok{)}
+\NormalTok{PAMClust1 =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{"NA"}\NormalTok{, }\KeywordTok{length}\NormalTok{(Sitecount_IH_join}\OperatorTok{$}\NormalTok{MinorityPerc))}
+\NormalTok{PAMClust1[test1}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{] =}\StringTok{ "High"}
+\NormalTok{PAMClust1[test1}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{] =}\StringTok{ "Low"}
+\NormalTok{Sitecount_IH_join}\OperatorTok{$}\NormalTok{Cluster =}\StringTok{ }\NormalTok{PAMClust1}
+
+\NormalTok{IH.count <-}\StringTok{ }\KeywordTok{count}\NormalTok{(Sitecount_IH_join, Sitecount_IH_join}\OperatorTok{$}\NormalTok{Cluster)}
+\KeywordTok{wilcox.test}\NormalTok{(Sitecount_IH_join}\OperatorTok{$}\NormalTok{n }\OperatorTok{~}\StringTok{ }\NormalTok{Sitecount_IH_join}\OperatorTok{$}\NormalTok{Cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Sitecount_IH_join$n by Sitecount_IH_join$Cluster
+## W = 1232.5, p-value = 0.6696
+## alternative hypothesis: true location shift is not equal to 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#P-value = 0.6696}
+
+\CommentTok{#FRB -error}
+\CommentTok{#Sitecount_FRB_join$MinorityPerc = na.omit(Sitecount_FRB_join$MinorityPerc)}
+\CommentTok{#test2 <- pam(x = FRB_x, k = 2, metric="manhattan")}
+\CommentTok{#PAMClust2 = rep("NA", length(Sitecount_FRB_join$MinorityPerc))}
+\CommentTok{#PAMClust2[test2$clustering == 1] = "High"}
+\CommentTok{#PAMClust2[test2$clustering == 2] = "Low"}
+\CommentTok{#Sitecount_FRB_join$Cluster = PAMClust2}
+
+\CommentTok{#FRB.count <- count(Sitecount_FRB_join, Sitecount_FRB_join$Cluster)}
+\CommentTok{#wilcox.test(Sitecount_IH_join$n ~ Sitecount_FRB_join$Cluster)}
+
+\CommentTok{#BF}
+\NormalTok{test3 <-}\StringTok{ }\KeywordTok{pam}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Sitecount_BF_join}\OperatorTok{$}\NormalTok{MinorityPerc, }\DataTypeTok{k =} \DecValTok{2}\NormalTok{, }\DataTypeTok{metric=}\StringTok{"manhattan"}\NormalTok{)}
+\NormalTok{PAMClust3 =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{"NA"}\NormalTok{, }\KeywordTok{length}\NormalTok{(Sitecount_BF_join}\OperatorTok{$}\NormalTok{MinorityPerc))}
+\NormalTok{PAMClust3[test3}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{] =}\StringTok{ "High"}
+\NormalTok{PAMClust3[test3}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{] =}\StringTok{ "Low"}
+\NormalTok{Sitecount_BF_join}\OperatorTok{$}\NormalTok{Cluster =}\StringTok{ }\NormalTok{PAMClust3}
+
+\NormalTok{BF.count <-}\StringTok{ }\KeywordTok{count}\NormalTok{(Sitecount_BF_join, Sitecount_BF_join}\OperatorTok{$}\NormalTok{Cluster)}
+\KeywordTok{wilcox.test}\NormalTok{(Sitecount_BF_join}\OperatorTok{$}\NormalTok{n }\OperatorTok{~}\StringTok{ }\NormalTok{Sitecount_BF_join}\OperatorTok{$}\NormalTok{Cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in wilcox.test.default(x = c(3L, 1L, 2L, 2L, 2L, 3L, 16L, 2L,
+## 21L, : cannot compute exact p-value with ties
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Sitecount_BF_join$n by Sitecount_BF_join$Cluster
+## W = 461, p-value = 0.6803
+## alternative hypothesis: true location shift is not equal to 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#P-value = 0.6803}
+
+\CommentTok{#RUST}
+\NormalTok{test4 <-}\StringTok{ }\KeywordTok{pam}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Sitecount_RUST_join}\OperatorTok{$}\NormalTok{MinorityPerc, }\DataTypeTok{k =} \DecValTok{2}\NormalTok{, }\DataTypeTok{metric=}\StringTok{"manhattan"}\NormalTok{)}
+\NormalTok{PAMClust4 =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{"NA"}\NormalTok{, }\KeywordTok{length}\NormalTok{(Sitecount_RUST_join}\OperatorTok{$}\NormalTok{MinorityPerc))}
+\NormalTok{PAMClust4[test4}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{] =}\StringTok{ "High"}
+\NormalTok{PAMClust4[test4}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{] =}\StringTok{ "Low"}
+\NormalTok{Sitecount_RUST_join}\OperatorTok{$}\NormalTok{Cluster =}\StringTok{ }\NormalTok{PAMClust4}
+
+\NormalTok{RUST.count <-}\StringTok{ }\KeywordTok{count}\NormalTok{(Sitecount_RUST_join, Sitecount_RUST_join}\OperatorTok{$}\NormalTok{Cluster)}
+\KeywordTok{wilcox.test}\NormalTok{(Sitecount_RUST_join}\OperatorTok{$}\NormalTok{n }\OperatorTok{~}\StringTok{ }\NormalTok{Sitecount_RUST_join}\OperatorTok{$}\NormalTok{Cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Sitecount_RUST_join$n by Sitecount_RUST_join$Cluster
+## W = 1221.5, p-value = 0.7398
+## alternative hypothesis: true location shift is not equal to 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#P-value = 0.7398}
+
+\CommentTok{#HW}
+\NormalTok{test5 <-}\StringTok{ }\KeywordTok{pam}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ Sitecount_HW_join}\OperatorTok{$}\NormalTok{MinorityPerc, }\DataTypeTok{k =} \DecValTok{2}\NormalTok{, }\DataTypeTok{metric=}\StringTok{"manhattan"}\NormalTok{)}
+\NormalTok{PAMClust5 =}\StringTok{ }\KeywordTok{rep}\NormalTok{(}\StringTok{"NA"}\NormalTok{, }\KeywordTok{length}\NormalTok{(Sitecount_HW_join}\OperatorTok{$}\NormalTok{MinorityPerc))}
+\NormalTok{PAMClust5[test5}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{] =}\StringTok{ "High"}
+\NormalTok{PAMClust5[test5}\OperatorTok{$}\NormalTok{clustering }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{] =}\StringTok{ "Low"}
+\NormalTok{Sitecount_HW_join}\OperatorTok{$}\NormalTok{Cluster =}\StringTok{ }\NormalTok{PAMClust5}
+
+\NormalTok{HW.count <-}\StringTok{ }\KeywordTok{count}\NormalTok{(Sitecount_HW_join, Sitecount_HW_join}\OperatorTok{$}\NormalTok{Cluster)}
+\KeywordTok{wilcox.test}\NormalTok{(Sitecount_HW_join}\OperatorTok{$}\NormalTok{n }\OperatorTok{~}\StringTok{ }\NormalTok{Sitecount_HW_join}\OperatorTok{$}\NormalTok{Cluster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in wilcox.test.default(x = c(46L, 5L, 11L, 3L, 9L, 45L, 12L, 3L, :
+## cannot compute exact p-value with ties
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Sitecount_HW_join$n by Sitecount_HW_join$Cluster
+## W = 1137.5, p-value = 0.4177
+## alternative hypothesis: true location shift is not equal to 0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#P-value = 0.4177}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-1.pdf}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-2.pdf}
+
+\begin{verbatim}
+## Warning: Removed 4 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-3.pdf}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-4.pdf}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-5.pdf}
+
+\begin{verbatim}
+## Warning: Removed 1 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-6.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-7.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-8.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-9.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-10.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-11.pdf}
+\includegraphics{Townsend_Project_Template_files/figure-latex/final visualizations-12.pdf}
+
+\newpage
+
+\section{Summary and Conclusions}\label{summary-and-conclusions}
+
+Based on my performed analysis, there is no significant difference in
+the number of hazardous waste sites that exist in counties with majority
+racial minority populations.
+
+\newpage
+
+\section{References}\label{references}
+
+U.S. Census Bureau. (2018). Small Area Income and Poverty Estimates
+(SAIPE) Program. Retrieved from
+\url{https://www.census.gov/programs-surveys/saipe/about.html}
+
+NC Budget and Management. (2019). LINC. Retrieved from
+\url{https://www.osbm.nc.gov/facts-figures/linc}
+
+
+\end{document}

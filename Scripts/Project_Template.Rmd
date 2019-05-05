@@ -72,7 +72,6 @@ Poverty_NC <- read.csv("./Data/Processed/NC_Poverty_processed.csv")
 Race <- read.csv("./Data/Processed/LINC_RaceData_2010.csv")
 Peak.Stage <- read.csv("./Data/Processed/FilteredPeaks.csv")  
 
-kable(Race, "latex", booktabs = T) 
 ```
 
 \newpage
